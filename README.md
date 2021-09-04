@@ -5,6 +5,7 @@ The main goal of the developed system is to track workers and objects in constru
 For this purpose, the beacons’ configurations are tuned, and a record correction algorithm is developed to solve the shortage of BLE packets limited payload that the receiver relies on to broadcast the location data to the gateway. Besides, a modular system infrastructure placement plan is proposed based on the effective devices' range to minimize the number of required devices on-site and improve the localization accuracy. The proposed localization estimation model leverages the placement strategy to categorize the records based on the estimated distances and the transmitter's position and finally localize them based on a developed technique for each category.
 
 ## Real-time Localization System (RTLS)
+The following modules consist the proposed RTLS
 
 ### Module 1 (Elasticsearch Pre-Processing)
 
