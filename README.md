@@ -1,14 +1,117 @@
-# Real-time Localization System (RTLS)
-Here are codes and datasets of a Real-time Localization System (RTLS) through Bluetooth Low Energy technology to track workers and objects in construction sites. To localize the position of the workers, they wear a hardhat equipped with a receiver on top. The receiver communicates with N fixed transmitters on the job sites and broadcasts the information to the gateway. A modular infrastructure placement strategy is proposed to strategically place the transmitters and the gateways on the job site to increase the system's efficiency. The detection of three transmitters close to the receiver is necessary for the receiver to be localized. The proposed real-time localization system contains three modules: (I) Data Pre-Processing; (II) RSSI-distance Prediction through a Machine Learning Model, (III) Localization through a Combination of Triangulation and Min-Max Techniques, (IV) Estimated Location Post-Processing. 
+# Real-Time Location System (RTLS)
 
-### Module (I): Data Pre-Processing
-Firstly, this module is meant to pre-process the raw dataset coming from Elasticsearch in order for the raw dataset to be in a suitable format for localization. Secondly, the (x,y) coordinates of the fixed transmitter on-site replace the IDs of the transmitters. Finally, a Semi-Logical record to Logical record converter Model is used to increase the ratio of the Logical records to improve the accuracy of the system. In order for a Semi-Logical record to be converted to a Logical one, the third broadcasted transmitter should be substituted with the one which belongs to the same module of the other two transmitters. The substitution of the third transmitter is made by applying a set of processes on the Semi-Logical records. Firstly, the algorithm calculates midpoints (Xh1, Yh1) and (Xh2, Yh2) which are between the location of the third transmitter (X3, Y3) and the other two (X2, Y2) and (X3, Y3). Then, the middle point between the previously found midpoints is calculated (Xm, Ym). This point acts as a guide that specifies the approximate area where the third transmitter should be associated with. In the next step, the distances of the guide point from the transmitters except those already included in the record are calculated. After that, the transmitter whose distance from the guide point is minimum is considered the correct third transmitter in the record. In the final step, the predicted transmitter replaces the old one by keeping its RSSI value.
+A Python-based Real-Time Location System (RTLS) that uses Bluetooth Low Energy (BLE) technology to track workers and objects in construction sites. The system localizes the position of workers wearing hardhats equipped with receivers that communicate with fixed transmitters on the job site.
 
-### Module (II): RSSI-distance Prediction through a Machine Learning Model
-In this module, the distance between the trasnmiiting and receiveing beacons is estimated through the Recieved Signal Strength Identity (RSSI). Random Forest (RF) is deployed for the RSSI-distance prediction model. In-lab experiments for the development of RSSI-distance relationship were conducted. The receiver beacon was placed on seventeen reference points (stations) which were marked at 25 cm intervals on a straight line with a total length of four meters, to ensure the exact position of the beacon while conducting the experiment. The experiments were performed for four orthogonal orientations of the transmitting beacon, with respect to the receiving beacon. Moreover, the experiments were repeated three times at each station, to obtain a consistent dataset of RSSI values per each reference point. The receiving beacon was moved from the first station (distance from transmitting beacon = 0) to the seventeenth reference point (distance from transmitting beacon = 4.0 m). The staying time of the transmitting beacon at each reference point was one minute. In the interest of time, the same settings were implemented on two parallel straight lines, two meters away from one another. Random Forest (RF) is the machine learning model that was trained. A random forest is an ensemble of multiple decision tree sets with the following modification: each node of a tree represents a best split for one specific attribute. Only a subset of attributes which are specified is considered for the splitting rule selection. After that, the erection of new nodes is repeated until the stopping criteria are met.
+## Features
 
-### Module (III): Localization through a Combination of Triangulation and Min-Max Techniques
-After estimating the distance between the receiver and each transmitter, the next step is to pinpoint the receiver's location. Different scenarios created by the arrangement of the transmitters and their estimated distance from the receiver are considered. Then, the localization estimation model consisting of positioning techniques for each scenario is presented. Trilateration and min-max are selected as the localization techniques due to their localization's acceptable accuracy according to prior literature. The triangulation technique computes the geometric properties of triangles to estimate the position of the target node, and the target node is localized by measuring its distances from many reference nodes. It uses the radius and center of the circles passing through the reference and target nodes, and then it calculates the intersection between the circles. As per the min-max technique, the target node constructs a bounding box around each reference node where the reference node locates at the center. The edge length of the box is equal to two times the estimated distance of that reference node from the target node. Then, the intersection of the boxes is determined by the target node, and its center is considered as the estimated target position.
+- Real-time position tracking using BLE technology
+- Modular infrastructure placement strategy
+- Robust data processing and filtering
+- Advanced localization algorithms combining triangulation and Kalman filtering
+- Visualization of tracking results
+- Support for multiple transmitters and receivers
 
-### Module (IV): Estimated Location Post-Processing
-The BLE signals can be affected by multipath mechanisms, which can cause distortions in the estimated distances between the beacons. It can potentially generate noises in the estimated locations, affecting the accuracy of the localization system. Therefore, the locations can be post-processed by different techniques to minimize the effect of distortions in the position of the target node. The models used in this module to post-process the location data are (i) Shifting the estimated position to the strongest transmitte and (ii) Kalman filtering technique. 
+## Project Structure
+
+```
+Real_Time_Location_System/
+├── data/
+│   ├── raw/                    # Raw data files
+│   │   ├── elasticsearch/      # Elasticsearch datasets
+│   │   └── rssi_dataset/       # RSSI-distance relationship data
+│   ├── processed/              # Processed data files
+│   └── results/                # Output results and visualizations
+├── rtls/                       # Main package directory
+│   ├── config/                 # Configuration files
+│   ├── data/                   # Data processing modules
+│   ├── models/                 # Localization models
+│   └── utils/                  # Utility functions
+├── tests/                      # Test files
+├── requirements.txt            # Python dependencies
+├── setup.py                    # Package installation file
+└── README.md                   # This file
+```
+
+## System Architecture
+
+The system consists of four main modules:
+
+1. **Data Pre-Processing**
+
+   - Processes raw data from Elasticsearch
+   - Converts transmitter IDs to coordinates
+   - Implements Semi-Logical to Logical record conversion
+   - Handles data cleaning and validation
+
+2. **RSSI-Distance Prediction**
+
+   - Converts Received Signal Strength Indicator (RSSI) to distance
+   - Uses calibrated path loss model
+   - Handles signal attenuation and interference
+
+3. **Position Estimation**
+
+   - Implements triangulation-based localization
+   - Uses least squares method for position calculation
+   - Supports multiple transmitter configurations
+   - Handles edge cases and error conditions
+
+4. **Position Post-Processing**
+   - Applies Kalman filtering for position smoothing
+   - Reduces noise and improves accuracy
+   - Handles missing or invalid data
+
+## Installation
+
+1. Clone the repository:
+
+```bash
+git clone https://github.com/yourusername/Real_Time_Location_System.git
+cd Real_Time_Location_System
+```
+
+2. Create a virtual environment (recommended):
+
+```bash
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+```
+
+3. Install the package:
+
+```bash
+pip install -e .
+```
+
+For development installation:
+
+```bash
+pip install -e ".[dev]"
+```
+
+## Usage
+
+1. Prepare your data:
+
+   - Place your raw data file in the `data/raw` directory
+   - Ensure the data follows the expected format (see Data Format section)
+
+2. Run the localization system:
+
+```bash
+python -m rtls.main
+```
+
+3. View results:
+   - Check the `data/results` directory for:
+     - `localization_results.csv`: Detailed position data
+     - `localization_plot.png`: Visualization of tracking results
+
+## Configuration
+
+The system can be configured through `rtls/config/settings.py`:
+
+- Transmitter coordinates
+- Maximum transmitter distance
+- Kalman filter parameters
+- Data processing parameters
